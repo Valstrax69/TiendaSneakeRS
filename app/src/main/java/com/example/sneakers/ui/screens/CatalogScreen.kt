@@ -34,14 +34,13 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.sneakers.data.entities.Product
 import com.example.sneakers.ui.navigation.Routes
-import com.example.sneakers.viewmodel.SharedViewModel
+import com.example.sneakers.viewmodel.CatalogViewModel
 
 @Composable
-fun CatalogScreen(navController: NavController, sharedViewModel: SharedViewModel) {
+fun CatalogScreen(navController: NavController, catalogViewModel: CatalogViewModel) {
     var searchQuery by remember { mutableStateOf("") }
-    val allProducts by sharedViewModel.products.collectAsState()
+    val allProducts by catalogViewModel.products.collectAsState()
 
-    // Excluimos el banner promocional (id = 0) de la lista del catálogo
     val productsForCatalog = allProducts.filter { it.id != 0 }
 
     val filteredProducts = if (searchQuery.isBlank()) {
@@ -79,7 +78,7 @@ fun CatalogScreen(navController: NavController, sharedViewModel: SharedViewModel
             ) {
                 items(filteredProducts) { product ->
                     ProductItem(product = product) {
-                        sharedViewModel.selectProduct(product)
+                        catalogViewModel.selectProduct(product)
                         navController.navigate(Routes.PreviewProduct.route)
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -109,7 +108,7 @@ fun ProductItem(product: Product, onClick: () -> Unit) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = product.name, style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "$${product.price}", fontWeight = FontWeight.SemiBold)
+                Text(text = "$${String.format("%.0f", product.price)}", fontWeight = FontWeight.SemiBold)
             }
         }
     }

@@ -8,12 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.sneakers.data.remote.CartRepository
 import com.example.sneakers.data.remote.UserRepository
@@ -21,14 +18,16 @@ import com.example.sneakers.ui.components.BottomNav
 import com.example.sneakers.ui.components.TopBar
 import com.example.sneakers.ui.navigation.MainNavigation
 import com.example.sneakers.ui.theme.SneakersTheme
-import com.example.sneakers.viewmodel.SharedViewModel
-import com.example.sneakers.viewmodel.SharedViewModelFactory
+import com.example.sneakers.viewmodel.AuthViewModel
+import com.example.sneakers.viewmodel.AuthViewModelFactory
+import com.example.sneakers.viewmodel.CartViewModel
+import com.example.sneakers.viewmodel.CartViewModelFactory
+import com.example.sneakers.viewmodel.CatalogViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // Obtenemos los repositorios desde nuestra clase Application
             val app = LocalContext.current.applicationContext as SneakersApp
             val cartRepository = app.cartRepository
             val userRepository = app.userRepository
@@ -40,20 +39,20 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun SneakersApp(cartRepository: CartRepository, userRepository: UserRepository) {
-    // Usamos nuestro Factory para construir el ViewModel con ambos repositorios
-    val sharedViewModel: SharedViewModel = viewModel(
-        factory = SharedViewModelFactory(cartRepository, userRepository)
-    )
+    val authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory(userRepository))
+    val cartViewModel: CartViewModel = viewModel(factory = CartViewModelFactory(cartRepository))
+    val catalogViewModel: CatalogViewModel = viewModel() // No necesita factory
+    
     val navController = rememberNavController()
 
     SneakersTheme {
         Surface {
             Scaffold(
-                topBar = { TopBar(navController, sharedViewModel) }, // Pasamos NavController y ViewModel al TopBar
-                bottomBar = { BottomNav(navController) }
+                topBar = { TopBar(navController, authViewModel) },
+                bottomBar = { BottomNav(navController, authViewModel) } // Corregido para pasar el AuthViewModel
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    MainNavigation(navController, sharedViewModel)
+                    MainNavigation(navController, authViewModel, catalogViewModel, cartViewModel)
                 }
             }
         }

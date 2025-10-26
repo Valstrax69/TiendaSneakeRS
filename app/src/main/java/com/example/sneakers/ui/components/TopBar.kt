@@ -16,15 +16,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.sneakers.ui.navigation.Routes
-import com.example.sneakers.viewmodel.SharedViewModel
-import com.example.sneakers.ui.theme.SpecialColor
-import com.example.sneakers.ui.theme.PrimaryColor
-
+import com.example.sneakers.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavController, sharedViewModel: SharedViewModel) {
-    val currentUser by sharedViewModel.currentUser.collectAsState()
+fun TopBar(navController: NavController, authViewModel: AuthViewModel) {
+    val currentUser by authViewModel.currentUser.collectAsState()
 
     CenterAlignedTopAppBar(
         title = {
@@ -40,14 +37,14 @@ fun TopBar(navController: NavController, sharedViewModel: SharedViewModel) {
             )
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = PrimaryColor,
-            titleContentColor = SpecialColor
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
         ),
         actions = {
-            // Mostramos el botón de logout solo si el usuario ha iniciado sesión
             if (currentUser != null) {
                 IconButton(onClick = {
-                    sharedViewModel.logout()
+                    authViewModel.logout()
                     navController.navigate(Routes.Login.route) {
                         popUpTo(navController.graph.startDestinationId) { inclusive = true }
                         launchSingleTop = true
@@ -62,4 +59,3 @@ fun TopBar(navController: NavController, sharedViewModel: SharedViewModel) {
         }
     )
 }
-

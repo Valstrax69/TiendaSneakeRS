@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -28,10 +29,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sneakers.ui.navigation.Routes
-import com.example.sneakers.viewmodel.SharedViewModel
+import com.example.sneakers.ui.theme.SpecialColor
+import com.example.sneakers.viewmodel.AuthViewModel
 
 @Composable
-fun RegisterScreen(navController: NavController, sharedViewModel: SharedViewModel) {
+fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -58,7 +60,7 @@ fun RegisterScreen(navController: NavController, sharedViewModel: SharedViewMode
             textAlign = TextAlign.Center
         )
         Text(
-            text = "Únete a la comunidad de Sneakers",
+            text = "Únete y obtén muchos beneficios",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )
@@ -135,7 +137,7 @@ fun RegisterScreen(navController: NavController, sharedViewModel: SharedViewMode
                 }
 
                 if (!nameError && emailError == null && !passwordError && confirmPasswordError == null) {
-                    sharedViewModel.registerUser(name, email, password) { success ->
+                    authViewModel.registerUser(name, email, password) { success ->
                         if (success) {
                             Toast.makeText(context, "¡Registro exitoso!", Toast.LENGTH_SHORT).show()
                             navController.navigate(Routes.Login.route) {
@@ -147,7 +149,8 @@ fun RegisterScreen(navController: NavController, sharedViewModel: SharedViewMode
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = SpecialColor)
         ) {
             Text("Registrarse")
         }

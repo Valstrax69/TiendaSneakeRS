@@ -6,40 +6,37 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.sneakers.ui.screens.CartScreen
-import com.example.sneakers.ui.screens.CatalogScreen
-import com.example.sneakers.ui.screens.CheckoutScreen
-import com.example.sneakers.ui.screens.DetailScreen
-import com.example.sneakers.ui.screens.HomeScreen
-import com.example.sneakers.ui.screens.LoginScreen
-import com.example.sneakers.ui.screens.OrderConfirmationScreen
-import com.example.sneakers.ui.screens.PreviewProductScreen
-import com.example.sneakers.ui.screens.ProfileScreen
-import com.example.sneakers.ui.screens.RegisterScreen
-import com.example.sneakers.viewmodel.SharedViewModel
+import com.example.sneakers.ui.screens.*
+import com.example.sneakers.viewmodel.AuthViewModel
+import com.example.sneakers.viewmodel.CartViewModel
+import com.example.sneakers.viewmodel.CatalogViewModel
 
 @Composable
-fun MainNavigation(navController: NavHostController, sharedViewModel: SharedViewModel) {
-    val currentUser by sharedViewModel.currentUser.collectAsState()
+fun MainNavigation(
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    catalogViewModel: CatalogViewModel,
+    cartViewModel: CartViewModel
+) {
+    val currentUser by authViewModel.currentUser.collectAsState()
 
     NavHost(navController = navController, startDestination = Routes.Home.route) {
-        composable(Routes.Home.route) { HomeScreen(navController, sharedViewModel) }
-        composable(Routes.Catalog.route) { CatalogScreen(navController, sharedViewModel) }
-        composable(Routes.Detail.route) { DetailScreen(navController, sharedViewModel) }
-        composable(Routes.Cart.route) { CartScreen(navController, sharedViewModel) }
-        composable(Routes.PreviewProduct.route) { PreviewProductScreen(navController, sharedViewModel) }
-        composable(Routes.Checkout.route) { CheckoutScreen(navController, sharedViewModel) }
+        composable(Routes.Home.route) { HomeScreen(navController, catalogViewModel) }
+        composable(Routes.Catalog.route) { CatalogScreen(navController, catalogViewModel) }
+        composable(Routes.PreviewProduct.route) { PreviewProductScreen(navController, catalogViewModel, cartViewModel) }
+        composable(Routes.Cart.route) { CartScreen(navController, cartViewModel) }
+        composable(Routes.Checkout.route) { CheckoutScreen(navController, cartViewModel) }
         composable(Routes.OrderConfirmation.route) { OrderConfirmationScreen(navController) }
 
-        composable(Routes.Login.route) { LoginScreen(navController, sharedViewModel) }
-        composable(Routes.Register.route) { RegisterScreen(navController, sharedViewModel) }
-        composable(Routes.Profile.route) { ProfileScreen(navController, sharedViewModel) }
+        composable(Routes.Login.route) { LoginScreen(navController, authViewModel) }
+        composable(Routes.Register.route) { RegisterScreen(navController, authViewModel) }
+        composable(Routes.Profile.route) { ProfileScreen(navController, authViewModel) }
 
         composable(Routes.Auth.route) {
             if (currentUser != null) {
-                ProfileScreen(navController, sharedViewModel)
+                ProfileScreen(navController, authViewModel)
             } else {
-                LoginScreen(navController, sharedViewModel)
+                LoginScreen(navController, authViewModel)
             }
         }
     }

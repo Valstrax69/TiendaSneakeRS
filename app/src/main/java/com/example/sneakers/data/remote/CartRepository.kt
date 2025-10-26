@@ -20,7 +20,7 @@ class CartRepository(private val cartDao: CartDao) {
         cartDao.clearCart()
     }
 
-    suspend fun getCartItemById(productId: Int): CartItem? {
-        return cartDao.getCartItemById(productId)
+    suspend fun getCartItemByIdAndSize(productId: Int, size: String): CartItem? {
+        return cartDao.getCartItemByIdAndSize(productId, size)
     }
 }

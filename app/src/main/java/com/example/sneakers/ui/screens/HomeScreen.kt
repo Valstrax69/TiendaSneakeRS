@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -33,13 +34,13 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.sneakers.data.entities.Product
 import com.example.sneakers.ui.navigation.Routes
-import com.example.sneakers.viewmodel.SharedViewModel
+import com.example.sneakers.viewmodel.CatalogViewModel
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
-    val allProducts by sharedViewModel.products.collectAsState()
+fun HomeScreen(navController: NavController, catalogViewModel: CatalogViewModel) {
+    val allProducts by catalogViewModel.products.collectAsState()
 
     val bannerProducts = allProducts.take(4)
     val featuredProducts = allProducts.drop(4)
@@ -62,30 +63,38 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
         if (bannerProducts.isNotEmpty()) {
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1.5f),
+                modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(horizontal = 32.dp)
             ) { page ->
                 val product = bannerProducts[page]
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .clickable {
-                            // Solo navegamos si no es el banner promocional (id=0)
-                            if (product.id != 0) {
-                                sharedViewModel.selectProduct(product)
-                                navController.navigate(Routes.PreviewProduct.route)
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.5f)
+                            .padding(8.dp)
+                            .clickable {
+                                if (product.id != 0) {
+                                    catalogViewModel.selectProduct(product)
+                                    navController.navigate(Routes.PreviewProduct.route)
+                                }
                             }
-                        }
-                ) {
-                    AsyncImage(
-                        model = product.image,
-                        contentDescription = "Banner de ${product.name}",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    ) {
+                        AsyncImage(
+                            model = product.image,
+                            contentDescription = "Banner de ${product.name}",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    if (product.id != 0) {
+                        Text(
+                            text = product.name,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -104,7 +113,7 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
         ) {
             items(featuredProducts) { product ->
                 FeaturedProductItem(product = product) {
-                    sharedViewModel.selectProduct(product)
+                    catalogViewModel.selectProduct(product)
                     navController.navigate(Routes.PreviewProduct.route)
                 }
             }
