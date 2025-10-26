@@ -1,24 +1,26 @@
 package com.example.sneakers.data.remote
 
-import com.example.sneakers.data.model.Sneaker
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.example.sneakers.data.dao.CartDao
+import com.example.sneakers.data.entities.CartItem
+import kotlinx.coroutines.flow.Flow
 
-class CartRepository {
-    private val _cartItems = MutableStateFlow<List<Sneaker>>(emptyList())
-    val cartItems = _cartItems.asStateFlow()
+class CartRepository(private val cartDao: CartDao) {
 
-    fun addToCart(sneaker: Sneaker) {
-        _cartItems.value = _cartItems.value + sneaker
+    val allCartItems: Flow<List<CartItem>> = cartDao.getCartItems()
+
+    suspend fun insert(cartItem: CartItem) {
+        cartDao.insert(cartItem)
     }
 
-    fun removeFromCart(sneaker: Sneaker) {
-        _cartItems.value = _cartItems.value - sneaker
+    suspend fun delete(cartItem: CartItem) {
+        cartDao.delete(cartItem)
     }
 
-    fun clearCart() {
-        _cartItems.value = emptyList()
+    suspend fun clearCart() {
+        cartDao.clearCart()
     }
 
-    fun total(): Double = _cartItems.value.sumOf { it.precio }
+    suspend fun getCartItemById(productId: Int): CartItem? {
+        return cartDao.getCartItemById(productId)
+    }
 }

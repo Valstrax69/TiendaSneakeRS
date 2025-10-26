@@ -1,10 +1,12 @@
 package com.example.sneakers.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -15,6 +17,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.sneakers.ui.navigation.Routes
 import com.example.sneakers.ui.theme.PrimaryColor
+import com.example.sneakers.ui.theme.SpecialColor
+
 
 @Composable
 fun BottomNav(navController: NavController) {
@@ -32,7 +36,7 @@ fun BottomNav(navController: NavController) {
         NavigationBarItem(
             selected = currentRoute == Routes.Catalog.route,
             onClick = { navController.navigate(Routes.Catalog.route) },
-            icon = { Icon(Icons.Default.MenuBook, contentDescription = "Catálogo") },
+            icon = { Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = "Catálogo") },
             label = { Text("Catálogo") },
             colors = NavigationBarItemDefaults.colors(selectedIconColor = PrimaryColor)
         )
@@ -42,6 +46,13 @@ fun BottomNav(navController: NavController) {
             icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Carrito") },
             label = { Text("Carrito") },
             colors = NavigationBarItemDefaults.colors(selectedIconColor = PrimaryColor)
+        )
+        NavigationBarItem(
+            selected = currentRoute == Routes.Auth.route,
+            onClick = { navController.navigate(Routes.Auth.route) },
+            icon = { Icon(Icons.Default.Person, contentDescription = "Perfil") },
+            label = { Text("Perfil") },
+            colors = NavigationBarItemDefaults.colors(selectedIconColor = SpecialColor)
         )
     }
 }

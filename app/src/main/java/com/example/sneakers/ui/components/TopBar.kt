@@ -1,27 +1,65 @@
 package com.example.sneakers.ui.components
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.sneakers.ui.navigation.Routes
+import com.example.sneakers.viewmodel.SharedViewModel
+import com.example.sneakers.ui.theme.SpecialColor
 import com.example.sneakers.ui.theme.PrimaryColor
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar() {
+fun TopBar(navController: NavController, sharedViewModel: SharedViewModel) {
+    val currentUser by sharedViewModel.currentUser.collectAsState()
+
     CenterAlignedTopAppBar(
         title = {
+            val titleText = if (currentUser != null) {
+                "Hola, ${currentUser!!.name}"
+            } else {
+                "Sneakers"
+            }
             Text(
-                text = "Sneakers",
+                text = titleText,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = PrimaryColor
-        )
+            containerColor = PrimaryColor,
+            titleContentColor = SpecialColor
+        ),
+        actions = {
+            // Mostramos el botón de logout solo si el usuario ha iniciado sesión
+            if (currentUser != null) {
+                IconButton(onClick = {
+                    sharedViewModel.logout()
+                    navController.navigate(Routes.Login.route) {
+                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Logout,
+                        contentDescription = "Cerrar Sesión"
+                    )
+                }
+            }
+        }
     )
 }
+
