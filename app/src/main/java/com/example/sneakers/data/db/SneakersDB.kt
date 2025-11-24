@@ -11,7 +11,7 @@ import com.example.sneakers.data.entities.User
 
 @Database(
     entities = [Product::class, User::class, CartItem::class],
-    version = 4
+    version = 5
 )
 abstract class SneakersDB : RoomDatabase() {
     abstract fun productDao(): ProductDao

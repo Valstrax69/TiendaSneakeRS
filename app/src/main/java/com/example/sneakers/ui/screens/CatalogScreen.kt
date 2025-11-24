@@ -35,6 +35,7 @@ import coil.compose.AsyncImage
 import com.example.sneakers.data.entities.Product
 import com.example.sneakers.ui.navigation.Routes
 import com.example.sneakers.viewmodel.CatalogViewModel
+import com.example.sneakers.ui.theme.SpecialColor
 
 @Composable
 fun CatalogScreen(navController: NavController, catalogViewModel: CatalogViewModel) {
@@ -94,11 +95,14 @@ fun ProductItem(product: Product, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = SpecialColor
+        )
     ) {
         Column {
             AsyncImage(
-                model = product.image,
+                model = product.image ?: "",
                 contentDescription = "Imagen de ${product.name}",
                 modifier = Modifier
                     .fillMaxWidth()

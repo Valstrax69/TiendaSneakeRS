@@ -81,7 +81,7 @@ fun HomeScreen(navController: NavController, catalogViewModel: CatalogViewModel)
                             }
                     ) {
                         AsyncImage(
-                            model = product.image,
+                            model = product.image ?: "",
                             contentDescription = "Banner de ${product.name}",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
@@ -132,7 +132,7 @@ fun FeaturedProductItem(product: Product, onClick: () -> Unit) {
     ) {
         Column {
             AsyncImage(
-                model = product.image,
+                model = product.image ?: "",
                 contentDescription = "Imagen de ${product.name}",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -141,7 +141,7 @@ fun FeaturedProductItem(product: Product, onClick: () -> Unit) {
             )
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(text = product.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
-                Text(text = "$${product.price}", fontWeight = FontWeight.Bold)
+                Text(text = "$${String.format("%.0f", product.price)}", fontWeight = FontWeight.Bold)
             }
         }
     }

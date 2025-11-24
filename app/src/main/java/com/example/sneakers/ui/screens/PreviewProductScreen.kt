@@ -73,7 +73,7 @@ fun PreviewProductScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AsyncImage(
-                    model = product.image,
+                    model = product.image ?: "", // Protección contra nulos
                     contentDescription = "Imagen del Producto",
                     modifier = Modifier
                         .fillMaxWidth()
@@ -83,32 +83,36 @@ fun PreviewProductScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(text = product.name, fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = product.description, style = MaterialTheme.typography.bodyLarge)
+                Text(text = product.description ?: "Sin descripción", style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(text = "$${String.format("%.0f", product.price)}", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
                 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Text("Selecciona una talla:", style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(8.dp))
-                val sizes = product.sizes.split(",").map { it.trim() }
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp)
-                ) {
-                    items(sizes) { size ->
-                        OutlinedButton(
-                            onClick = { selectedSize = size },
-                            colors = if (selectedSize == size) {
-                                ButtonDefaults.outlinedButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
-                                )
-                            } else {
-                                ButtonDefaults.outlinedButtonColors()
+                val sizes = product.sizes?.split(",")?.map { it.trim() } ?: emptyList()
+
+                if (sizes.isNotEmpty()) {
+                    Text("Selecciona una talla:", style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp)
+                    ) {
+                        items(sizes) { size ->
+                            OutlinedButton(
+                                onClick = { selectedSize = size },
+                                colors = if (selectedSize == size) {
+                                    ButtonDefaults.outlinedButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                } else {
+                                    ButtonDefaults.outlinedButtonColors()
+                                }
+                            ) {
+                                Text(size)
                             }
-                        ) {
-                            Text(size)
                         }
                     }
                 }
@@ -117,11 +121,14 @@ fun PreviewProductScreen(
 
                 Button(
                     onClick = {
-                        cartViewModel.addToCart(product, selectedSize!!)
+                        // Si no hay tallas, permitimos añadir sin talla (para evitar bloqueo)
+                        val sizeToAdd = selectedSize ?: "Única"
+                        cartViewModel.addToCart(product, sizeToAdd)
                         Toast.makeText(context, "¡Añadido al carrito!", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = selectedSize != null,
+                    // Habilitado si seleccionó talla O si el producto no tiene tallas
+                    enabled = selectedSize != null || sizes.isEmpty(),
                     colors = ButtonDefaults.buttonColors(containerColor = SpecialColor)
                 ) {
                     Text("Añadir al Carrito")

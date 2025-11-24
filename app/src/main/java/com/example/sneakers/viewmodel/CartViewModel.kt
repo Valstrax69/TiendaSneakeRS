@@ -25,9 +25,9 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
             val newCartItem = CartItem(
                 id = product.id,
                 name = product.name,
-                description = product.description,
+                description = product.description ?: "Sin descripción",
                 price = product.price,
-                image = product.image,
+                image = product.image ?: "",
                 selectedSize = size,
                 quantity = 1
             )
