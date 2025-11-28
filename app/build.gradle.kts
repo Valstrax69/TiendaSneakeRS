@@ -26,10 +26,13 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Aquí creamos la variable de entorno accesible desde el código
-        // Si no encuentra la clave en local.properties, usa una cadena vacía por defecto
-        val apiUrl = localProperties.getProperty("API_BASE_URL") ?: ""
+        val apiUrl = localProperties.getProperty(
+        "API_BASE_URL",
+        "https://sneaker-fullstack3.onrender.com/"
+        )
+
         buildConfigField("String", "API_BASE_URL", "\"$apiUrl\"")
+
     }
 
     buildTypes {
